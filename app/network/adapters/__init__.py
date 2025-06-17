@@ -7,6 +7,17 @@
 """
 
 from .base import AdapterError, BaseAdapter, CommandError, ParseError, UnsupportedActionError
+from .cisco import CiscoAdapter
 from .h3c import H3CAdapter
+from .huawei import HuaweiAdapter
 
-__all__ = ["BaseAdapter", "AdapterError", "UnsupportedActionError", "ParseError", "CommandError", "H3CAdapter"]
+__all__ = [
+    "BaseAdapter",
+    "AdapterError",
+    "UnsupportedActionError",
+    "ParseError",
+    "CommandError",
+    "H3CAdapter",
+    "HuaweiAdapter",
+    "CiscoAdapter",
+]

@@ -448,8 +448,6 @@ class ConfigManager:
             except Exception as e:
                 logger.warning(f"解析备份文件 {backup_file} 失败: {e}")
                 continue
-
-        # 按修改时间倒序排列
+        # 按修改时间倒序排列，确保以字符串类型排序，避免类型错误
         backups.sort(key=lambda x: x["modified_time"], reverse=True)
-
         return backups

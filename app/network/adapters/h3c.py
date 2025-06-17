@@ -148,26 +148,13 @@ class H3CAdapter(BaseAdapter):
         Returns:
             解析后的结构化数据
         """
-        # 根据动作类型选择对应的解析方法
-        if action == "get_version":
-            return self._parse_version(output)
-        elif action == "find_mac":
-            return self._parse_mac_search(output)
-        elif action == "get_interfaces":
-            return self._parse_interfaces_brief(output)
-        elif action == "get_interface_detail":
-            return self._parse_interface_detail(output)
-        elif action == "get_mac_table":
-            return self._parse_mac_table(output)
-        elif action == "find_arp":
-            return self._parse_arp_search(output)
-        elif action == "get_vlan":
-            return self._parse_vlan_brief(output)
-        elif action == "ping":
-            return self._parse_ping(output)
-        else:
-            # 对于不需要特殊解析的命令，返回原始输出
-            return {"raw": output, "parsed": None}
+        parser_method = getattr(self, f"_parse_fallback_{action}", None)
+        if parser_method:
+            parsed_data = parser_method(output)
+            return {"raw": output, "parsed": parsed_data}
+
+        # Default case for actions without a specific parser
+        return {"raw": output, "parsed": None}
 
     def get_connection_extras(self) -> dict[str, Any]:
         """获取H3C设备连接特殊配置
@@ -200,7 +187,7 @@ class H3CAdapter(BaseAdapter):
         # 转换为H3C格式: xxxx-xxxx-xxxx
         return f"{clean_mac[0:4]}-{clean_mac[4:8]}-{clean_mac[8:12]}"
 
-    def _parse_version(self, output: str) -> dict[str, Any]:
+    def _parse_fallback_get_version(self, output: str) -> dict[str, Any] | None:
         """解析版本信息
 
         Args:
@@ -209,7 +196,7 @@ class H3CAdapter(BaseAdapter):
         Returns:
             解析后的版本信息
         """
-        result = {"raw": output}
+        result: dict[str, str] = {}
 
         # 提取系统版本
         version_match = re.search(r"H3C Comware Software, Version (.+)", output)
@@ -231,9 +218,9 @@ class H3CAdapter(BaseAdapter):
         if uptime_match:
             result["uptime"] = uptime_match.group(1).strip()
 
-        return result
+        return result if result else None
 
-    def _parse_mac_search(self, output: str) -> dict[str, Any]:
+    def _parse_fallback_find_mac(self, output: str) -> list[dict[str, str]] | None:
         """解析MAC地址搜索结果
 
         Args:
@@ -242,7 +229,7 @@ class H3CAdapter(BaseAdapter):
         Returns:
             解析后的MAC搜索结果
         """
-        result = {"raw": output, "found": []}
+        found_items: list[dict[str, str]] = []
 
         # H3C MAC表格式: MAC地址 VLAN ID 状态 端口
         for line in output.strip().split("\n"):
@@ -252,11 +239,11 @@ class H3CAdapter(BaseAdapter):
 
             parts = line.split()
             if len(parts) >= 4:
-                result["found"].append({"mac": parts[0], "vlan": parts[1], "status": parts[2], "interface": parts[3]})
+                found_items.append({"mac": parts[0], "vlan": parts[1], "status": parts[2], "interface": parts[3]})
 
-        return result
+        return found_items if found_items else None
 
-    def _parse_interfaces_brief(self, output: str) -> dict[str, Any]:
+    def _parse_fallback_get_interfaces(self, output: str) -> list[dict[str, Any]] | None:
         """解析接口简要信息
 
         Args:
@@ -265,7 +252,7 @@ class H3CAdapter(BaseAdapter):
         Returns:
             解析后的接口信息
         """
-        result = {"raw": output, "interfaces": []}
+        interfaces: list[dict[str, Any]] = []
 
         # 解析接口列表
         for line in output.strip().split("\n"):
@@ -274,7 +261,7 @@ class H3CAdapter(BaseAdapter):
 
             parts = line.split()
             if len(parts) >= 3:
-                result["interfaces"].append(
+                interfaces.append(
                     {
                         "interface": parts[0],
                         "link": parts[1],
@@ -283,9 +270,9 @@ class H3CAdapter(BaseAdapter):
                     }
                 )
 
-        return result
+        return interfaces if interfaces else None
 
-    def _parse_interface_detail(self, output: str) -> dict[str, Any]:
+    def _parse_fallback_get_interface_detail(self, output: str) -> dict[str, Any] | None:
         """解析接口详细信息
 
         Args:
@@ -294,7 +281,7 @@ class H3CAdapter(BaseAdapter):
         Returns:
             解析后的接口详细信息
         """
-        result = {"raw": output}
+        result: dict[str, str] = {}
 
         # 提取接口状态
         if "line protocol is up" in output:
@@ -314,9 +301,9 @@ class H3CAdapter(BaseAdapter):
         if ip_match:
             result["ip_info"] = ip_match.group(1).strip()
 
-        return result
+        return result if result else None
 
-    def _parse_mac_table(self, output: str) -> dict[str, Any]:
+    def _parse_fallback_get_mac_table(self, output: str) -> list[dict[str, str]] | None:
         """解析MAC地址表
 
         Args:
@@ -325,9 +312,9 @@ class H3CAdapter(BaseAdapter):
         Returns:
             解析后的MAC地址表
         """
-        return self._parse_mac_search(output)  # 使用相同的解析逻辑
+        return self._parse_fallback_find_mac(output)  # 使用相同的解析逻辑
 
-    def _parse_arp_search(self, output: str) -> dict[str, Any]:
+    def _parse_fallback_find_arp(self, output: str) -> list[dict[str, str]] | None:
         """解析ARP搜索结果
 
         Args:
@@ -336,7 +323,7 @@ class H3CAdapter(BaseAdapter):
         Returns:
             解析后的ARP搜索结果
         """
-        result = {"raw": output, "found": []}
+        found: list[dict[str, str]] = []
 
         for line in output.strip().split("\n"):
             line = line.strip()
@@ -345,11 +332,11 @@ class H3CAdapter(BaseAdapter):
 
             parts = line.split()
             if len(parts) >= 4:
-                result["found"].append({"ip": parts[0], "mac": parts[1], "type": parts[2], "interface": parts[3]})
+                found.append({"ip": parts[0], "mac": parts[1], "type": parts[2], "interface": parts[3]})
 
-        return result
+        return found if found else None
 
-    def _parse_vlan_brief(self, output: str) -> dict[str, Any]:
+    def _parse_fallback_get_vlan(self, output: str) -> list[dict[str, str]] | None:
         """解析VLAN简要信息
 
         Args:
@@ -358,7 +345,7 @@ class H3CAdapter(BaseAdapter):
         Returns:
             解析后的VLAN信息
         """
-        result = {"raw": output, "vlans": []}
+        vlans: list[dict[str, str]] = []
 
         for line in output.strip().split("\n"):
             if "VLAN" in line or "---" in line:
@@ -366,7 +353,7 @@ class H3CAdapter(BaseAdapter):
 
             parts = line.split()
             if len(parts) >= 2:
-                result["vlans"].append(
+                vlans.append(
                     {
                         "vlan_id": parts[0],
                         "name": parts[1] if len(parts) > 1 else "",
@@ -374,9 +361,9 @@ class H3CAdapter(BaseAdapter):
                     }
                 )
 
-        return result
+        return vlans if vlans else None
 
-    def _parse_ping(self, output: str) -> dict[str, Any]:
+    def _parse_fallback_ping(self, output: str) -> dict[str, str] | None:
         """解析ping结果
 
         Args:
@@ -385,7 +372,7 @@ class H3CAdapter(BaseAdapter):
         Returns:
             解析后的ping结果
         """
-        result = {"raw": output}
+        result: dict[str, str] = {}
 
         # 提取成功率
         success_match = re.search(r"(\d+)% packet loss", output)
@@ -400,4 +387,4 @@ class H3CAdapter(BaseAdapter):
             result["packets_sent"] = str(stats_match.group(1))
             result["packets_received"] = str(stats_match.group(2))
 
-        return result
+        return result if result else None

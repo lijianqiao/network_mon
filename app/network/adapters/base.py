@@ -10,8 +10,8 @@ from abc import ABC, abstractmethod
 from typing import Any
 
 try:
-    from ntc_templates.parse import parse_output
-    from textfsm import TextFSM  # noqa: F401
+    from ntc_templates.parse import parse_output  # type: ignore
+    from textfsm import TextFSM  # type: ignore  # noqa: F401
 
     TEXTFSM_AVAILABLE = True
 except ImportError:
