@@ -14,3 +14,19 @@ asyncpg
 
 # cache
 redis[hiredis]
+
+# network automation
+scrapli[asyncssh]
+scrapli-cfg
+scrapli-community
+nornir
+nornir-scrapli
+ntc-templates
+
+# snmp monitoring
+pysnmp-lextudio
+pysnmp-mibs
+
+# websocket & async
+websockets
+asyncio

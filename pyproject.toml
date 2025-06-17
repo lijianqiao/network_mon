@@ -24,6 +24,7 @@ dependencies = [
     "scrapli-community>=2025.1.30",
     "tortoise-orm>=0.25.1",
     "uvicorn[standard]>=0.34.3",
+    "pysnmp>=7.1.20",
 ]
 
 [tool.hatch.build.targets.wheel]

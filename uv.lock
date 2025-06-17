@@ -478,6 +478,7 @@ dependencies = [
     { name = "nornir-scrapli" },
     { name = "ntc-templates" },
     { name = "pydantic-settings" },
+    { name = "pysnmp" },
     { name = "redis", extra = ["hiredis"] },
     { name = "scrapli", extra = ["asyncssh"] },
     { name = "scrapli-community" },
@@ -501,6 +502,7 @@ requires-dist = [
     { name = "nornir-scrapli", specifier = ">=2025.1.30" },
     { name = "ntc-templates", specifier = ">=7.9.0" },
     { name = "pydantic-settings", specifier = ">=2.9.1" },
+    { name = "pysnmp", specifier = ">=7.1.20" },
     { name = "redis", extras = ["hiredis"], specifier = ">=6.2.0" },
     { name = "scrapli", extras = ["asyncssh"], specifier = ">=2025.1.30" },
     { name = "scrapli-community", specifier = ">=2025.1.30" },
@@ -590,6 +592,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pyasn1"
+version = "0.6.1"
+source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple" }
+sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/ba/e9/01f1a64245b89f039897cb0130016d79f77d52669aae6ee7b159a6c4c018/pyasn1-0.6.1.tar.gz", hash = "sha256:6f580d2bdd84365380830acf45550f2511469f673cb4a5ae3857a3170128b034", size = 145322, upload-time = "2024-09-10T22:41:42.55Z" }
+wheels = [
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/c8/f1/d6a797abb14f6283c0ddff96bbdd46937f64122b8c925cab503dd37f8214/pyasn1-0.6.1-py3-none-any.whl", hash = "sha256:0d632f46f2ba09143da3a8afe9e33fb6f92fa2320ab7e886e2d0f7672af84629", size = 83135, upload-time = "2024-09-11T16:00:36.122Z" },
+]
+
+[[package]]
 name = "pycparser"
 version = "2.22"
 source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple" }
@@ -671,6 +682,18 @@ source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple" }
 sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/db/03/c293fd42c3669e5a79d508c3ed1ca3ffa501600d93abd904a0f86d493ba0/pypika_tortoise-0.6.1.tar.gz", hash = "sha256:36ec2c88c255b9ed7ef49a6068cdeac10dafd4ddfeb828205d3afc092507fc3a", size = 39951, upload-time = "2025-06-04T14:11:53.915Z" }
 wheels = [
     { url = "https://pypi.tuna.tsinghua.edu.cn/packages/1c/cd/fa8124fe37a2f1e8e362e128407b26e6a651dd6190a1e53c9fe5ab550842/pypika_tortoise-0.6.1-py3-none-any.whl", hash = "sha256:da15886f37b347e71f0869f9e4ee2f9259e6bb57455b45299c6c23d7927cbb6e", size = 46593, upload-time = "2025-06-04T14:11:52.977Z" },
+]
+
+[[package]]
+name = "pysnmp"
+version = "7.1.20"
+source = { registry = "https://pypi.tuna.tsinghua.edu.cn/simple" }
+dependencies = [
+    { name = "pyasn1" },
+]
+sdist = { url = "https://pypi.tuna.tsinghua.edu.cn/packages/93/23/37ddb1f9a8321a7d1d00c62efaa568d2faf707cca35797ab6f7005dbbc2b/pysnmp-7.1.20.tar.gz", hash = "sha256:1a74f072eaa43725f348d82710a0e4f8854f85597d9a545fdae3929147bae502", size = 258845, upload-time = "2025-05-01T04:58:01.411Z" }
+wheels = [
+    { url = "https://pypi.tuna.tsinghua.edu.cn/packages/fc/48/7fdd0f6b02133a218a61347f4ca4044ea117167be3ae53e73f039e95ac4e/pysnmp-7.1.20-py3-none-any.whl", hash = "sha256:9d7251e0cdf5f604abe53a65821da30ab3788a2320c883e7edb46d0f43007e3a", size = 343055, upload-time = "2025-05-01T04:57:59.619Z" },
 ]
 
 [[package]]

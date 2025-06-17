@@ -8,7 +8,7 @@
 
 from fastapi import APIRouter
 
-from .endpoints import automation, configs, dashboard, devices, logs, monitors
+from .endpoints import automation, cli, config, configs, dashboard, devices, logs, monitoring, monitors
 
 api_router = APIRouter()
 
@@ -19,3 +19,6 @@ api_router.include_router(monitors.router)
 api_router.include_router(logs.router)
 api_router.include_router(dashboard.router)
 api_router.include_router(automation.router)  # 网络自动化API
+api_router.include_router(config.router)  # 配置管理API
+api_router.include_router(cli.router)  # CLI相关API
+api_router.include_router(monitoring.router)  # SNMP监控API

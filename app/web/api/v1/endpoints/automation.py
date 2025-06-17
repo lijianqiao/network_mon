@@ -11,7 +11,7 @@ from datetime import datetime
 
 from fastapi import APIRouter, HTTPException, status
 
-from app.network.services.network_service import NetworkAutomationService
+from app.core.dependencies import NetworkAutomationServiceDep
 from app.schemas.base import SuccessResponse
 from app.schemas.network import (
     BatchNetworkTaskRequest,
@@ -29,19 +29,15 @@ from app.schemas.network import (
 
 router = APIRouter(prefix="/automation", tags=["网络自动化"])
 
-# 网络自动化服务实例
-automation_service = NetworkAutomationService()
-
-
 # ================================ 任务执行 ================================
 
 
 @router.get("/tasks/supported", response_model=SuccessResponse[SupportedTasksResponse])
-async def get_supported_tasks():
+async def get_supported_tasks(automation_service: NetworkAutomationServiceDep):
     """获取支持的网络任务列表"""
     try:
         task_names = automation_service.get_supported_tasks()
-        task_categories = automation_service.get_task_categories()
+        # task_categories = automation_service.get_task_categories()
 
         # 构建任务信息
         task_info_map = {
@@ -116,7 +112,7 @@ async def get_supported_tasks():
 
 
 @router.post("/tasks/execute", response_model=SuccessResponse[NetworkTaskResponse])
-async def execute_network_task(task_request: NetworkTaskRequest):
+async def execute_network_task(task_request: NetworkTaskRequest, automation_service: NetworkAutomationServiceDep):
     """执行网络任务"""
     try:
         # 将字符串device_id转换为整数（假设是数据库ID）
@@ -160,7 +156,9 @@ async def execute_network_task(task_request: NetworkTaskRequest):
 
 
 @router.post("/tasks/batch", response_model=SuccessResponse[BatchNetworkTaskResponse])
-async def execute_batch_network_task(batch_request: BatchNetworkTaskRequest):
+async def execute_batch_network_task(
+    batch_request: BatchNetworkTaskRequest, automation_service: NetworkAutomationServiceDep
+):
     """批量执行网络任务"""
     try:
         batch_id = str(uuid.uuid4())
@@ -223,7 +221,9 @@ async def execute_batch_network_task(batch_request: BatchNetworkTaskRequest):
 
 
 @router.post("/connectivity/test", response_model=SuccessResponse[DeviceConnectivityResponse])
-async def test_device_connectivity(connectivity_request: DeviceConnectivityRequest):
+async def test_device_connectivity(
+    connectivity_request: DeviceConnectivityRequest, automation_service: NetworkAutomationServiceDep
+):
     """测试设备连通性"""
     try:
         # 将字符串device_id转换为整数
@@ -263,7 +263,7 @@ async def test_device_connectivity(connectivity_request: DeviceConnectivityReque
 
 
 @router.post("/discovery/scan", response_model=SuccessResponse[NetworkDiscoveryResponse])
-async def scan_network(discovery_request: NetworkDiscoveryRequest):
+async def scan_network(discovery_request: NetworkDiscoveryRequest, automation_service: NetworkAutomationServiceDep):
     """扫描网络发现设备"""
     try:
         result = await automation_service.discover_network_devices(
@@ -309,7 +309,7 @@ async def scan_network(discovery_request: NetworkDiscoveryRequest):
 
 
 @router.get("/statistics", response_model=SuccessResponse[dict])
-async def get_automation_statistics():
+async def get_automation_statistics(automation_service: NetworkAutomationServiceDep):
     """获取自动化统计信息"""
     try:
         statistics = await automation_service.get_automation_statistics()

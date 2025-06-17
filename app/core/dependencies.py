@@ -13,6 +13,10 @@ from fastapi import Depends
 from tortoise.transactions import in_transaction
 
 from app.core.config import Settings, get_settings
+from app.network.cli.cli_manager import CLIManager, cli_manager
+from app.network.config.config_manager import ConfigManager
+from app.network.monitoring.snmp_service import SNMPService
+from app.network.services.network_service import NetworkAutomationService
 from app.services import (
     AlertService,
     AreaService,
@@ -26,10 +30,6 @@ from app.services import (
     SystemLogService,
 )
 
-# ========================= 配置依赖 =========================
-# 直接使用 config.py 中的 get_settings 函数，避免重复定义
-
-
 # ========================= 数据库事务依赖 =========================
 
 
@@ -39,7 +39,30 @@ async def get_db_transaction() -> AsyncGenerator:
         yield conn
 
 
-# ========================= 服务层依赖 =========================
+# ========================= 网络模块服务依赖 =========================
+
+
+def get_network_automation_service() -> NetworkAutomationService:
+    """获取网络自动化服务实例"""
+    return NetworkAutomationService()
+
+
+def get_cli_manager() -> CLIManager:
+    """获取CLI管理器实例"""
+    return cli_manager
+
+
+def get_config_manager() -> ConfigManager:
+    """获取配置管理器实例"""
+    return ConfigManager()
+
+
+def get_snmp_service() -> SNMPService:
+    """获取SNMP服务实例"""
+    return SNMPService()
+
+
+# ========================= 传统服务层依赖 =========================
 
 
 def get_brand_service() -> BrandService:
@@ -97,6 +120,12 @@ def get_system_log_service() -> SystemLogService:
 # 配置依赖
 SettingsDep = Annotated[Settings, Depends(get_settings)]
 
+# 网络模块依赖
+CLIManagerDep = Annotated[CLIManager, Depends(get_cli_manager)]
+ConfigManagerDep = Annotated[ConfigManager, Depends(get_config_manager)]
+SNMPServiceDep = Annotated[SNMPService, Depends(get_snmp_service)]
+# 网络自动化服务依赖
+NetworkAutomationServiceDep = Annotated[NetworkAutomationService, Depends(get_network_automation_service)]
 
 # 服务依赖
 BrandServiceDep = Annotated[BrandService, Depends(get_brand_service)]

@@ -8,7 +8,7 @@
 
 from fastapi import APIRouter
 
-from .endpoints import automation, configs, dashboard, devices, logs, monitors
+from .endpoints import automation, cli, config, configs, dashboard, devices, logs, monitoring, monitors
 
 api_router = APIRouter()
 
@@ -26,3 +26,8 @@ api_router.include_router(dashboard.router, prefix="/dashboard", tags=["仪表�
 api_router.include_router(
     automation.router, prefix="/network", tags=["网络自动化"]
 )  # 假设network模块已存在并包含相关路由
+api_router.include_router(config.router, prefix="/config", tags=["网络自动化配置管理"])
+api_router.include_router(cli.router, prefix="/cli", tags=["CLI管理"])
+api_router.include_router(
+    monitoring.router, prefix="/monitoring", tags=["SNMP监控"]
+)  # 假设monitoring模块已存在并包含相关路由
