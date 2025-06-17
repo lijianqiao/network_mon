@@ -7,14 +7,13 @@
 """
 
 from collections.abc import AsyncGenerator
-from functools import lru_cache
 from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from tortoise.transactions import in_transaction
 
-from app.core.config import Settings
+from app.core.config import Settings, get_settings
 from app.services import (
     AlertService,
     AreaService,
@@ -29,12 +28,7 @@ from app.services import (
 )
 
 # ========================= 配置依赖 =========================
-
-
-@lru_cache
-def get_settings() -> Settings:
-    """获取应用配置单例"""
-    return Settings()
+# 直接使用 config.py 中的 get_settings 函数，避免重复定义
 
 
 # ========================= 认证依赖 =========================
