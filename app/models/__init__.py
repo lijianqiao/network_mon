@@ -3,30 +3,36 @@
 @Email: lijianqiao2906@live.com
 @FileName: __init__.py
 @DateTime: 2025-06-17
-@Docs: 模型包初始化文件，导出所有模型类
+@Docs: 模型包初始化文件，导出所有模型类和枚举
 """
 
-# 导入所有模型类
+from .data_enum import (
+    ActionEnum,
+    AlertStatusEnum,
+    AlertTypeEnum,
+    ConnectionTypeEnum,
+    DeviceStatusEnum,
+    DeviceTypeEnum,
+    LogLevelEnum,
+    MetricStatusEnum,
+    MetricTypeEnum,
+    OperationResultEnum,
+    ResourceTypeEnum,
+    SeverityEnum,
+    TemplateTypeEnum,
+)
 from .data_models import (
     Alert,
     Area,
     BaseModel,
     Brand,
-    ConfigFile,
     ConfigTemplate,
     Device,
-    DeviceConfig,
     DeviceGroup,
-    DeviceInterface,
-    DeviceType,
+    DeviceModel,
     MonitorMetric,
     OperationLog,
-    Role,
     SystemLog,
-    Task,
-    TaskResult,
-    User,
-    UserRole,
 )
 
 __all__ = [
@@ -34,27 +40,30 @@ __all__ = [
     "BaseModel",
     # 设备相关模型
     "Brand",
-    "DeviceType",
+    "DeviceModel",
     "Area",
     "DeviceGroup",
     "Device",
-    # 任务相关模型
-    "Task",
-    "TaskResult",
-    # 配置相关模型
-    "DeviceConfig",
+    # 配置模板
     "ConfigTemplate",
     # 监控相关模型
     "MonitorMetric",
     "Alert",
-    # 用户管理模型
-    "User",
-    "Role",
-    "UserRole",
     # 日志相关模型
     "OperationLog",
     "SystemLog",
-    # 接口和文件模型
-    "DeviceInterface",
-    "ConfigFile",
+    # 枚举类
+    "ActionEnum",
+    "AlertStatusEnum",
+    "AlertTypeEnum",
+    "ConnectionTypeEnum",
+    "DeviceStatusEnum",
+    "DeviceTypeEnum",
+    "LogLevelEnum",
+    "MetricStatusEnum",
+    "MetricTypeEnum",
+    "OperationResultEnum",
+    "ResourceTypeEnum",
+    "SeverityEnum",
+    "TemplateTypeEnum",
 ]
