@@ -97,9 +97,9 @@ app/network/
 
 #### 5.2. 核心模块代码
 
-**`app/core/inventory.py` - 动态设备清单**
+**`app/network/core/inventory.py` - 动态设备清单**
 ```python
-# app/core/inventory.py
+# app/network/core/inventory.py
 from nornir.core.inventory import Inventory, Host
 from typing import List, Dict, Any
 
@@ -145,9 +145,9 @@ class DynamicInventory:
         }.get(brand.upper(), "generic")
 ```
 
-**`app/core/runner.py` - 核心任务执行器**
+**`app/network/core/runner.py` - 核心任务执行器**
 ```python
-# app/core/runner.py
+# app/network/core/runner.py
 import getpass
 from nornir import InitNornir
 from .inventory import DynamicInventory
@@ -184,9 +184,9 @@ class TaskRunner:
         return processed_results
 ```
 
-**`app/adapters/base.py` & `app/adapters/h3c.py` - 设备适配器**
+**`app/network/adapters/base.py` & `app/network/adapters/h3c.py` - 设备适配器**
 ```python
-# app/adapters/base.py
+# app/network/adapters/base.py
 class BaseAdapter:
     def get_command(self, action: str, **params) -> str:
         raise NotImplementedError
@@ -194,7 +194,7 @@ class BaseAdapter:
     def parse(self, action: str, output: str) -> Dict:
         raise NotImplementedError
 
-# app/adapters/h3c.py
+# app/network/adapters/h3c.py
 from ntc_templates.parse import parse_output
 from .base import BaseAdapter
 
@@ -228,9 +228,9 @@ class H3CAdapter(BaseAdapter):
 
 #### 6.1. 业务逻辑 (`tasks` 模块)
 
-**`app/tasks/get_info.py` - 查询任务**
+**`app/network/tasks/get_info.py` - 查询任务**
 ```python
-# app/tasks/get_info.py
+# app/network/tasks/get_info.py
 from nornir.core.task import Task, Result
 from nornir_scrapli.tasks import send_command
 from app.adapters import H3CAdapter, HuaweiAdapter # 导入所有适配器
@@ -254,9 +254,9 @@ def get_info_task(task: Task, action: str, **params) -> Result:
 
 #### 6.2. 服务层 (`services` 模块)
 
-**`app/services/network_service.py` - 封装调用**
+**`app/network/services/network_service.py` - 封装调用**
 ```python
-# app/services/network_service.py
+# app/network/services/network_service.py
 from app.core.runner import TaskRunner
 from app.tasks.get_info import get_info_task
 from typing import List, Dict, Any
@@ -289,10 +289,10 @@ class NetworkService:
 
 ### 7. 独立模块说明
 
-* **SNMP 监控模块 (`monitoring/snmp_poller.py`)**
+* **SNMP 监控模块 (`app/network/monitoring/snmp_poller.py`)**
     此模块应作为一个独立的后台进程运行（例如，使用 `systemd` 或 `supervisor` 管理）。它使用 `APScheduler` 等定时任务库，每2分钟执行一次轮询函数。该函数从数据库获取所有需要监控的设备IP，然后使用 `pysnmp` 库并发地向这些IP发送 SNMP `get` 请求（例如，查询 `sysUpTime` OID）。如果请求超时或失败，则认为设备离线，并更新数据库中的设备状态或发送告警。
 
-* **WebSocket 实时CLI (`web/ws/`)**
+* **WebSocket 实时CLI (`app/network/web/ws/`)**
     当用户通过Web界面连接到一个设备的CLI时，WebSocket后端会创建一个会话。用户输入的每一行命令，都会通过 `NetworkService` 调用 `TaskRunner`，执行一个简单的 `send_command` 任务。这个任务只针对单个设备，并将原始输出（`result.result`）直接通过WebSocket流式返回给前端的 `xterm.js` 终端，从而实现实时交互。
 
 ### 8. 总结
