@@ -56,17 +56,15 @@ def register_routes(app: FastAPI) -> None:
     Args:
         app (FastAPI): FastAPI应用实例
     """
-    # # 导入路由模块
-    # from app.routers import api_router
-    #
-    # # 注册主路由
-    # app.include_router(api_router, prefix=settings.API_PREFIX)
+    # 导入路由模块
+    from app.web.api.v1.api import api_router
+    from app.web.ws.websocket import router as ws_router
 
-    # 添加健康检查接口
-    @app.get("/health", tags=["系统"])
-    async def health_check():
-        """健康检查接口"""
-        return {"status": "ok", "version": settings.APP_VERSION}
+    # 注册主API路由
+    app.include_router(api_router, prefix=f"{settings.API_PREFIX}/v1")
+
+    # 注册WebSocket路由
+    app.include_router(ws_router, prefix="/ws")
 
 
 def register_tortoise_orm(app: FastAPI) -> None:
