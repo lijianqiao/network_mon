@@ -8,7 +8,7 @@
 
 from fastapi import APIRouter
 
-from .endpoints import configs, dashboard, devices, logs, monitors
+from .endpoints import automation, configs, dashboard, devices, logs, monitors
 
 api_router = APIRouter()
 
@@ -22,3 +22,7 @@ api_router.include_router(monitors.router, prefix="/monitors", tags=["监控管�
 api_router.include_router(logs.router, prefix="/logs", tags=["日志管理"])
 
 api_router.include_router(dashboard.router, prefix="/dashboard", tags=["仪表板"])
+
+api_router.include_router(
+    automation.router, prefix="/network", tags=["网络自动化"]
+)  # 假设network模块已存在并包含相关路由

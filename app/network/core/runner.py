@@ -8,9 +8,30 @@
 
 import asyncio
 from collections.abc import Callable
+from dataclasses import dataclass
+from datetime import datetime
 from typing import Any
 
 from app.network.core.inventory import DynamicInventory
+
+
+@dataclass
+class TaskResult:
+    """任务执行结果"""
+
+    success: bool
+    task_id: str
+    device_id: str
+    command: str | None = None
+    raw_output: str | None = None
+    parsed_data: dict[str, Any] | None = None
+    execution_time: float = 0.0
+    error: str | None = None
+    timestamp: datetime | None = None
+
+    def __post_init__(self):
+        if self.timestamp is None:
+            self.timestamp = datetime.now()
 
 
 class TaskRunner:

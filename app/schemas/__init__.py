@@ -83,6 +83,25 @@ from .monitor import (
     MonitorMetricUpdate,
 )
 
+# 网络自动化模型
+from .network import (
+    BatchNetworkTaskRequest,
+    BatchNetworkTaskResponse,
+    DeviceConnectivityRequest,
+    DeviceConnectivityResponse,
+    DeviceStatusSummary,
+    DiscoveredDevice,
+    NetworkDeviceCreate,
+    NetworkDeviceResponse,
+    NetworkDeviceUpdate,
+    NetworkDiscoveryRequest,
+    NetworkDiscoveryResponse,
+    NetworkTaskRequest,
+    NetworkTaskResponse,
+    SupportedTaskInfo,
+    SupportedTasksResponse,
+)
+
 __all__ = [
     # 基础模型
     "BaseResponse",
@@ -146,4 +165,20 @@ __all__ = [
     "SystemLogQueryParams",
     "LogStatistics",
     "LogExportRequest",
+    # 网络自动化
+    "NetworkDeviceCreate",
+    "NetworkDeviceUpdate",
+    "NetworkDeviceResponse",
+    "NetworkTaskRequest",
+    "NetworkTaskResponse",
+    "BatchNetworkTaskRequest",
+    "BatchNetworkTaskResponse",
+    "DeviceConnectivityRequest",
+    "DeviceConnectivityResponse",
+    "NetworkDiscoveryRequest",
+    "NetworkDiscoveryResponse",
+    "DiscoveredDevice",
+    "DeviceStatusSummary",
+    "SupportedTaskInfo",
+    "SupportedTasksResponse",
 ]
